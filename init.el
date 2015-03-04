@@ -93,7 +93,7 @@
 (setq cua-auto-tabify-rectangles nil) ;; Don't tabify after rectangle commands
 (transient-mark-mode 1)               ;; No region when it is not highlighted
 (setq cua-keep-region-after-copy t)   ;; Standard Windows behaviour
-(setq interprogram-paste-function 'x-cut-buffer-or-selection-value)
+(setq interprogram-paste-function 'x-selection-value)
 
 ;; we speak utf-8 here
 (set-language-environment "utf-8")
