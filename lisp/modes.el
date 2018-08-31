@@ -83,26 +83,51 @@
 
 ;;;----------------------------------------------------------------------------
 ;; python mode
-;; nothing to do should work
+
+;; Send current line to interpreter window (bound to C-return like in ESS)
+(defun my-python-send-line ()
+ (interactive)
+  (save-excursion
+  (setq the_script_buffer (format (buffer-name)))
+  (end-of-line)
+  (kill-region (point) (progn (back-to-indentation) (point)))
+  ;(setq the_py_buffer (format "*Python[%s]*" (buffer-file-name)))
+  (setq the_py_buffer "*Python*")
+  (switch-to-buffer-other-window  the_py_buffer)
+  (goto-char (buffer-end 1))
+  (yank)
+  (comint-send-input)
+  (switch-to-buffer-other-window the_script_buffer)
+  (yank)
+  )
+  (next-line)
+)
 ;; End setup python-mode-------------------------------------------------------
 
 ;;;----------------------------------------------------------------------------
-;; Setup R and julia mode using ESS
-(require 'ess-site) 
-(setq ess-ask-for-ess-directory nil)
-(setq ess-nuke-trailing-whitespace-p t)
-(ess-toggle-underscore nil)
-(setq ess-fancy-comments nil) ; turn off aligning single '#' to col 40
-;; End setup R-mode -----------------------------------------------------------
+;; Setup ESS for R and julia
+(require 'ess-site)
+
+(add-hook 'ess-mode-hook (lambda ()
+  ; turn off aligning single '#' to col 40
+  (setq ess-indent-with-fancy-comments nil)
+  (setq ess-ask-for-ess-directory nil)
+  (setq ess-nuke-trailing-whitespace-p t)
+  (setq ess-smart-S-assign-key ";") ; use ";" as shortcut for <-
+  (ess-toggle-S-assign nil) ; Takes two calls
+  (ess-toggle-S-assign nil) ; See documentation for ess-smart-S-assign-key
+  (setq ess-swv-processor 'knitr) ; use knitr as default engine, not sweave
+  (ess-set-style 'RStudio) ; because collaboration
+  (setq ess-directory-function (lambda () default-directory))
+  ))
+;; End setup ESS  -------------------------------------------------------------
 
 ;; ----------------------------------------------------------------------------
 ;; Setup Latex mode
-
-;; (load "auctex.el" nil t t)  ;; not needed when using auctex from ELPA
-;; (require 'latex) ;; not needed when using auctex from ELPA
 (add-hook 'LaTeX-mode-hook (lambda ()
   (setq TeX-fold-mode 1)    ;; turn on folding
-  (TeX-PDF-mode)
+;;  (setq-default TeX-engine 'xetex) ;; XeTeX  Best to set on per file basis
+;;  (setq-default TeX-PDF-mode t)  ;; PDF with XeTeX
   (setq TeX-newline-function 'reindent-then-newline-and-indent)
   (setq LaTeX-item-indent 2)
   (setq TeX-brace-indent-level 2)

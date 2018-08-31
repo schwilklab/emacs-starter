@@ -54,6 +54,11 @@
    "C-c d"  insert-date-string
 ))
 
+;; Get ess-like send line to interpreter in python mode
+(add-hook 'python-mode-hook (lambda ()
+    (define-key python-mode-map (kbd "<C-return>")
+    'my-python-send-line)))
+
 ;; Rebind Alt-q to maybe-fill-paragraph so we don't use alt-q to fill when we
 ;; are in visual-line-mode
 (add-hook 'text-mode-hook '(lambda ()
