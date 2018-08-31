@@ -92,6 +92,12 @@
 (setq-default fill-column 79)
 (defalias 'yes-or-no-p 'y-or-n-p)     ;; y or n is enough
 
+;; Search and autocompletion
+(setq ido-mode 1) ;; Use IDO with flx-ido for both buffer and file completion
+(setq ido-default-file-method 'selected-window)
+(setq ido-default-buffer-method 'selected-window)
+(setq ido-everywhere t)
+
 ;; Windows-style cut-copy-paste
 (cua-mode t)
 (setq x-select-enable-clipboard t)    ;; cut-paste
