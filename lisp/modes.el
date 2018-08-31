@@ -15,18 +15,23 @@
 ;; magit installed via MELPA, See http://magit.github.io/magit/magit.html
 ;; git-commit-mode installed via MELPA
 
-;; All below should be automatic as part of git-commit-mode other than turning
-;; off visual line mode.
-(add-hook 'git-commit-mode-hook (lambda ()
-  (visual-line-mode -1)
-  (auto-fill-mode t)
-  (setq fill-column git-commit-fill-column)
-))
-;; End setup version control -------------------------------------------------
+;; Make word diff (dark red/dark green) show by default. Toggle with `D t`
+;; (magit-diff-toggle-refine-hunk)
+(setq magit-diff-refine-hunk t)
+
+;; see https://github.com/magit/magit/issues/1803
+(setq magit-last-seen-setup-instructions "1.4.0")
+
+; git-commit options. Autofill on by default
+(setq git-commit-summary-max-length 50)
+;; git-commit-fill-column is obsolete, so use hook to set local fill-column:
+(add-hook 'git-commit-mode-hook (lambda () (setq fill-column 72)))
+;; ;; End setup version control -------------------------------------------------
 
 ;;;----------------------------------------------------------------------------
 ;;; Various text modes setup
 ;; ---------------------------------------------------------------------------
+
 
 ;; Overall text-mode settings
 (require 'table)
