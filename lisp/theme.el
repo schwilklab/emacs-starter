@@ -3,11 +3,11 @@
 ;; theme.el configuration file
 ;; author: Dylan Schwilk
 ;;
-;;; Theme-related houseeping such as frame setup. Actual theme to load selected
+;;; Theme-related housekeeping such as frame setup. Actual theme to load selected
 ;;; below. Default is Schwilk color theme.
 ;;;;---------------------------------------------------------------------------
 
-;; set color theme here (from themes in ~/.init.d/themes/):
+;; set color theme here (from themes in ~/.emacs.d/themes/):
 (setq the-color-theme 'schwilk)
 
 ;; change frame size depending on resolution
@@ -32,28 +32,32 @@
       '("Source Sans Pro" "DejaVu Sans" "Helvetica"))
   
 (setq dynamic-fonts-preferred-monospace-fonts
-      '("Inconsolata" "Consolas" "Ubuntu Mono" "Source Code Pro" "Envy Code R"
+      '("Inconsolata" "Ubuntu Mono" "Consolas" "Source Code Pro" "Envy Code R"
         "Droid Sans Mono Pro" "Droid Sans Mono" "DejaVu Sans Mono"))
 
 (setq dynamic-fonts-preferred-monospace-point-size 14)
 (setq dynamic-fonts-preferred-proportional-point-size 14)
 
+;; Unicode fonts
+(require 'unicode-fonts) ;; creates fallback unicode mappings
 
-;; Now setup the theme. 
-(defun my-start-theme (new-frame)
-   (select-frame new-frame)
+(defun dws-start-theme ()
    (set-frame-size-according-to-resolution)
    (load-theme the-color-theme t)
    (dynamic-fonts-setup)
+   (unicode-fonts-setup)
   )
 
+;; Now setup the theme.
+(defun dws-setup-frame (new-frame)
+   (select-frame new-frame)
+   (dws-start-theme)
+)
 
 ;; if starting daemon, add hook to load theme, otherwise load theme
 (if (daemonp)
-    (add-hook 'after-make-frame-functions 'my-start-theme)
-    (set-frame-size-according-to-resolution)
-    (load-theme the-color-theme t)
-    (dynamic-fonts-setup)
+    (add-hook 'after-make-frame-functions 'dws-setup-frame)
+    (dws-start-theme)
 )
 
 ;; and this to get window focus:
@@ -109,7 +113,7 @@
     ;; was this buffer modified since the last save?
     '(:eval (when (and (buffer-modified-p) (not buffer-read-only) )
               (concat ","  (propertize "Unsaved"
-                             'face 'font-lock-warning-face
+                             'face 'font-lock-variable-name-face
                              'help-echo "Buffer has been modified"))))
 
     ;; is this buffer read-only?
@@ -129,4 +133,3 @@
     "%-" ;; fill with '-'
     ))
 ;; end set modeline
-
