@@ -40,9 +40,12 @@
   (visual-line-mode)
   ;; and for when we turn off visual-line-mode:
   (setq fill-column 79)
-  (flyspell-mode)
-  (table-recognize) ; use table.el
 ))
+
+;; Flyspell for spell checking in text modes and coding
+(add-hook 'text-mode-hook 'flyspell-mode)
+(add-hook 'prog-mode-hook 'flyspell-prog-mode)
+
 
 ;; ----------------------------------------------------------------------------
 ;; Markdown mode
@@ -171,26 +174,21 @@
 (add-hook 'markdown-mode-hook 'turn-on-reftex)
 (setq reftex-plug-into-AUCTeX t)
 
+;; ----------------------------------------------------------------------------
+;; Setup RefTeX
+(setq reftex-enable-partial-scans t)
+(setq reftex-use-multiple-selection-buffers t)
+(autoload 'reftex-mode     "reftex" "RefTeX Minor Mode" t)
+(autoload 'turn-on-reftex  "reftex" "RefTeX Minor Mode" nil)
+(autoload 'reftex-citation "reftex-cite" "Make citation" nil)
+(autoload 'reftex-index-phrase-mode "reftex-index" "Phrase mode" t)
+(add-hook 'LaTeX-mode-hook 'turn-on-reftex)   ; with AUCTeX LaTeX mode
+(add-hook 'latex-mode-hook 'turn-on-reftex)   ; with Emacs latex mode
+(setq reftex-plug-into-AUCTeX t)
 
-; RefTeX for pandoc style citations in markdown and org-mode
-(defun pandoc-reftex-setup ()
-  (turn-on-reftex)
-  (and (buffer-file-name) (file-exists-p (buffer-file-name))
-    (progn
-      ; enable auto-revert-mode to update reftex when bibtex file changes on disk
-      (global-auto-revert-mode t)
-      (reftex-parse-all)
-      ; pandoc-style citations. Multiple selections do not get correct
-      ; semi-colon separator
-      (reftex-set-cite-format '((?\C-m . "[@%l]")                 
-)))))
-(add-hook 'markdown-mode-hook 'pandoc-reftex-setup)
-;(add-hook 'org-mode-hook 'pandoc-reftex-setup) ; if you use ox-pandoc
-
-;; For LaTeX:
 (eval-after-load 'reftex-vars
   '(progn
-     ;; cite format for bibtex/natbiib and biblatex
+     ;; cite format for pandoc-markdown, bibtex/natbiib and biblatex
      (setq reftex-cite-format
        '((?\C-m . "\\cite[]{%l}")
          (?p . "\\citep[][]{%l}")  ; natbib
@@ -216,6 +214,26 @@
 
 (setq reftex-cite-prompt-optional-args nil)
 (setq reftex-cite-cleanup-optional-args t)
+
+;; RefTeX for pandoc: markdown and org-mode (with ox-pandoc)
+(defun pandoc-reftex-setup ()
+  (turn-on-reftex)
+  (and (buffer-file-name) (file-exists-p (buffer-file-name))
+       (progn
+	 ;enable auto-revert-mode to update reftex when bibtex file changes on disk
+	 (global-auto-revert-mode t)
+	 (reftex-parse-all)
+	 ;add a custom reftex cite format to insert links
+	 (reftex-set-cite-format
+	  '((?\C-m . "[@%l]") ;; pandoc-style citations. Multiple selections do not
+                          ;; get correct semi-colon separator
+       ))))
+)
+
+(add-hook 'markdown-mode-hook 'pandoc-reftex-setup)
+(add-hook 'org-mode-hook 'pandoc-reftex-setup) ; use [@key] style in org-mode
+
+;; End setup RefTeX---- -------------------------------------------------------
 
 ;; BibTeX-mode Get bibtex mode to autogenerate keys that match schwilk database
 ;; style
