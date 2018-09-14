@@ -1,7 +1,9 @@
 schwilk-emacs-starter
 =====================
 
-A starter .emacs.d directory for my students with support for R programming (through ESS), Markdown editing ([markdown-mode][markdown-mode] and [pandoc-mode][pandoc-mode]), LaTeX editing (auctex), and git (using [magit][magit]). I use [org-mode][org-mode] but for this .emacs, the org-mode setup is just the org-mode defaults. If you are interested in a more complete org-mode setup, see [my own .emacs](https://github.com/dschwilk/emacs-config) which has a similar structure to this one but with more customization.
+A starter .emacs.d directory for my students with support for R programming (through ESS), Markdown editing ([markdown-mode][markdown-mode] and [pandoc-mode][pandoc-mode]), LaTeX editing (auctex), and git (using [magit][magit]). I use [org-mode][org-mode] but for this .emacs, the org-mode setup is just the org-mode defaults. 
+
+There are other good starter packages out there.  There are also some very complete emacs configurations available. One of the best I've seen is [scimax](https://github.com/jkitchin/scimax)
 
 Requirements
 ------------
