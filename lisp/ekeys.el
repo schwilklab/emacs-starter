@@ -54,6 +54,19 @@
    "C-c d"  insert-date-string
 ))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Mode specific bindings
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+; Text mode keys
+(defun dws-text-mode-keys ()
+  "my keys for `text-mode'."
+  (interactive)
+  (local-set-key (kbd "C-c M-q") 'format-sw-stat-block)
+  (define-key text-mode-map "\M-q" 'compact-uncompact-block))
+
+(add-hook 'text-mode-hook 'dws-text-mode-keys)
+
 ;; Get ess-like send line to interpreter in python mode
 (add-hook 'python-mode-hook (lambda ()
     (define-key python-mode-map (kbd "<C-return>")
@@ -68,3 +81,5 @@
 ;; conflicts with the rectangle selection tool in CUA-mode.
 (define-key ess-mode-map [(control return)] nil)
 (define-key ess-mode-map [(shift return)] 'ess-eval-region-or-line-and-step)
+
+

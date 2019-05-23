@@ -47,6 +47,15 @@
 (add-hook 'prog-mode-hook 'flyspell-prog-mode)
 
 
+;;
+;; org-mode
+;; My org agenda files. Personalize this!
+
+;;(setq org-directory "~/org/") 
+;;(setq org-agenda-files (file-expand-wildcards (concat org-directory "*.org")))
+;;(setq org-default-notes-file (concat org-directory "refile.org"))
+
+
 ;; ----------------------------------------------------------------------------
 ;; Markdown mode
 (autoload 'markdown-mode "markdown-mode"
@@ -243,7 +252,8 @@
 (setq bibtex-autokey-year-length 4)
 (setq  bibtex-autokey-title-terminators ".") ;; no title
 (setq bibtex-autokey-name-year-separator "-")
-(setq bibtex-autokey-additional-names "+etal")
+(setq bibtex-autokey-additional-names "-etal")
 (defun dws-do-nothing (tstr) tstr)
 (setq bibtex-autokey-name-case-convert-function 'dws-do-nothing)
 (setq bibtex-autokey-edit-before-use nil)
+

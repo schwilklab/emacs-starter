@@ -7,6 +7,10 @@
 ;;; below. Default is Schwilk color theme.
 ;;;;---------------------------------------------------------------------------
 
+;; Prevent x resources settings from affecting cursor color see
+;; https://emacs.stackexchange.com/questions/13291/emacs-cursor-color-is-different-in-daemon-and-non-daemon-modes
+(setq inhibit-x-resources t)
+
 ;; set color theme here (from themes in ~/.emacs.d/themes/):
 (setq the-color-theme 'schwilk)
 
@@ -40,96 +44,53 @@
 
 ;; Unicode fonts
 (require 'unicode-fonts) ;; creates fallback unicode mappings
+(unicode-fonts-setup)
 
-(defun dws-start-theme ()
-   (set-frame-size-according-to-resolution)
-   (load-theme the-color-theme t)
-   (dynamic-fonts-setup)
-   (unicode-fonts-setup)
-  )
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; Set theme
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; Now setup the theme.
+;; ;; and this to get window focus:
+;; (defun px-raise-frame-and-give-focus ()
+;;   (when window-system
+;;     (raise-frame)
+;;     (x-focus-frame (selected-frame))
+;;     (set-mouse-pixel-position (selected-frame) 4 4)
+;;     ))
+
+;; (add-hook 'server-switch-hook 'px-raise-frame-and-give-focus)
+
+;; Setup the new frame.
 (defun dws-setup-frame (new-frame)
-   (select-frame new-frame)
-   (dws-start-theme)
+  (select-frame new-frame)
+  (set-frame-size-according-to-resolution)
+  (dynamic-fonts-setup)
 )
 
-;; if starting daemon, add hook to load theme, otherwise load theme
-(if (daemonp)
-    (add-hook 'after-make-frame-functions 'dws-setup-frame)
-    (dws-start-theme)
-)
+;; add hook to setup frames:
+(add-hook 'after-make-frame-functions 'dws-setup-frame)
 
-;; and this to get window focus:
-(defun px-raise-frame-and-give-focus ()
-  (when window-system
-    (raise-frame)
-    (x-focus-frame (selected-frame))
-    (set-mouse-pixel-position (selected-frame) 4 4)
-    ))
-(add-hook 'server-switch-hook 'px-raise-frame-and-give-focus)
+;; load the color theme (schwilk)
+(load-theme the-color-theme t nil)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Set modeline
-;; use setq-default to set it for /all/ modes
-;;(setq mode-line-format
-;; This could be wrapped up the the schwilk-theme
-(setq-default mode-line-format
-  (list
-    ;; the buffer name; the file name as a tool tip
-    '(:eval (propertize "%b " 'face 'font-lock-keyword-face
-        'help-echo (buffer-file-name)))
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; use smart-line-mode for modeline
+(setq sml/no-confirm-load-theme t) ; otherwise, sml/setup must come after load
+                                   ; custom file or emacs will prompt for theme
+                                   ; safety
+(sml/setup)
 
-    ;; line and column
-    "(" ;; '%02' to set to 2 chars at least; prevents flickering
-      (propertize "%02l" 'face 'font-lock-type-face 'help-echo "Line number")
-       ","
-      (propertize "%02c" 'face 'font-lock-type-face 'help-echo "Column number")
-    ") "
-
-    ;; relative position, size of file
-    "["
-    (propertize "%p" 'face 'font-lock-constant-face
-                     'help-echo "Relative position") ;; % above top
-    "/"
-    (propertize "%I" 'face 'font-lock-constant-face
-                     'help-echo "Buffer size") ;; size
-    "] "
-
-    ;; the current major mode for the buffer.
-    "["
-
-    '(:eval (propertize "%m" 'face 'font-lock-string-face
-              'help-echo "Major mode"))
-    "] "
+;; remove some "always on" minor modes from modeline
+(setq rm-blacklist
+      (format "^ \\(%s\\)$"
+              (mapconcat #'identity
+                         '("Fly.*" "Ivy" "ElDoc")
+                         "\\|")))
 
 
-    "[" ;; insert vs overwrite mode, input-method in a tooltip
-    '(:eval (propertize (if overwrite-mode "Ovr" "Ins")
-              'face 'font-lock-preprocessor-face
-              'help-echo (concat "Buffer is in "
-                           (if overwrite-mode "overwrite" "insert") " mode")))
 
-    ;; was this buffer modified since the last save?
-    '(:eval (when (and (buffer-modified-p) (not buffer-read-only) )
-              (concat ","  (propertize "Unsaved"
-                             'face 'font-lock-variable-name-face
-                             'help-echo "Buffer has been modified"))))
-
-    ;; is this buffer read-only?
-    '(:eval (when buffer-read-only
-              (concat ","  (propertize "RO"
-                             'face 'font-lock-type-face
-                             'help-echo "Buffer is read-only"))))  
-    "] "
-
-    ;; add the time, with the date
-    '(:eval (propertize (format-time-string "%H:%M")
-              'help-echo
-              (format-time-string "%c")))
-    " --"
-    ;; I don't want to see minor-modes; but if you want, uncomment this:
-    ;;minor-mode-alist  ;; list of minor modes
-    "%-" ;; fill with '-'
-    ))
-;; end set modeline
+;; Below only necessary when running emacs NOT as daemon:
+;; setup fonts on this frame if started as regular emacs
+(dynamic-fonts-setup)

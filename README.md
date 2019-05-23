@@ -1,9 +1,11 @@
 schwilk-emacs-starter
 =====================
 
-A starter .emacs.d directory for my students with support for R programming (through ESS), Markdown editing ([markdown-mode][markdown-mode] and [pandoc-mode][pandoc-mode]), LaTeX editing (auctex), and git (using [magit][magit]). I use [org-mode][org-mode] but for this .emacs, the org-mode setup is just the org-mode defaults. 
+A starter .emacs.d directory for my students with support for R programming (through ESS), Markdown editing ([markdown-mode][markdown-mode] and [pandoc-mode][pandoc-mode]), LaTeX editing (auctex), and git (using [magit][magit]). I use [org-mode][org-mode] but for this .emacs, the org-mode setup is just the org-mode defaults.  I use mu4e to read and compose emails in eamcs, but this starter kit does not include that customization as that is a more committing undertaking!
 
-There are other good starter packages out there.  There are also some very complete emacs configurations available. One of the best I've seen is [scimax](https://github.com/jkitchin/scimax)
+There are other good starter packages out there: https://www.emacswiki.org/emacs/StarterKits 
+
+The more popular ones, however, drastically modify emacs as an experience. That could be what you want, but that is not what this more minor start kit aims for. This is mean as something relatively easy to understand and read through so that you can go about modifying it yourself.
 
 Requirements
 ------------
@@ -35,11 +37,25 @@ Modify the placeholders for email address and name in init.el:
 Using
 -----
 
-The first time you start emacs with this new configuration, do so as a regular emacs session (not daemon). Emacs will ask you if it is ok to install some packages from MELPA (see list of required packages in init.el). Choose "y" so that emacs will use the package manager to install these packages upon which this configuration depends.
+The first time you start emacs with this new configuration, do so as a regular emacs session (not daemon). Emacs will ask you if it is ok to install some packages from MELPA (see list of required packages in init.el). Choose "y" so that emacs will use the package manager to install these packages upon which this configuration depends. If you receive any errors, close Emacs (from the menu, with "C-x C-c", or "M-x kill-emacs") and restart it. Sometimes it needs a couple of restarts during this package installation phase. I should modify the init to use the "use-package" system which is more robust.
 
-If you receive any errors, close Emacs (from the menu, with "C-x C-c", or "M-x kill-emacs") and restart it. Sometimes it needs a couple of restarts during this package installation phase (I will work on fixing this, it may have to do with the order in which packages are installed).. 
+When emacs starts, it may show a gray background theme rather than the dark "schwilk" theme. To load my color theme, go to "options -> Customize Emacs -> Custom themes" and choose "schwilk". Then choose "save" to allow this theme to load automatically from now on. You can use this Customize Emacs menu to select any other installed theme and to change emacs options. Those settings are then saved to ".emacs.d/custom.el".
 
-When emacs starts, it may show a gray background theme rather than the dark "schwilk" theme. To load my color theme, go to "options -> Customize Emacs -> Custom themes" and choose "schwilk". Then choose "save" to allow this theme to load automatically from now on. You can use this Customize Emacs menu to select any other installed theme and to change emacs options.  Those settings are then saved to ".emacs.d/custom.el".
+### Setting up emacs to run as a background process
+
+The best way to run emacs is as a background process in daemon mode. The simplest way to do this is to simply start emacs as `emacsclient -c -a""`.  This tells emacs to start as a cleint attaching to a server, create a windows frame (-c) and start the server ("daemon") if there is none (`-a""` option, see https://www.gnu.org/software/emacs/manual/html_node/emacs/emacsclient-Options.html#emacsclient-Options). To avoid typing that, just put an icon in your start menu or panel that runs that command.
+
+I also have the following in my login profile (.profile file):
+
+``` shell
+EDITOR=emacsclient
+ALTERNATE_EDITOR=""
+VISUAL="emacsclient -c"
+export EDITOR
+export ALTERNATE_EDITOR
+export VISUAL
+```
+
 
 ### For coding in R and running R interactively
 
@@ -69,6 +85,7 @@ Emacs will look for fonts in this order so make sure that at least one is instal
 Some keybindings (shortcuts to a few functions in efuncs.el):
 * "C-x g"   magit-status
 * "C-c \\"  the-the: find duplicated words in your text (spellcheckers usually miss these)
+* "M-q"     In text documents correctly fills and unfills text blocks. See efuncs.el
 * "C-c d"   insert-date-string: insert a quick date such as 2013-10-22
 
 [cua-mode]:http://www.emacswiki.org/CuaMode

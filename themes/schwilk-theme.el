@@ -1,6 +1,6 @@
 ;;; schwilk-theme.el --- A dark theme for Emacs.
 
-;; Copyright (C) 2013 Dylan Schwilk 
+;; Copyright (C) 2013-2018 Dylan Schwilk 
 
 ;; Author: Dylan Schwilk <dylan@schwilk.org>
 ;; Version: 0.2
@@ -73,7 +73,6 @@
     ("schwilk-magenta"  . "#DC8CC3"))
   "List of Schwilk colors.
 Each element has the form (NAME . HEX).
-
 `+N' suffixes indicate a color is lighter.
 `-N' suffixes indicate a color is darker.")
 
@@ -852,4 +851,3 @@ This requires library `rainbow-mode'.")
 ;; eval: (when (require 'rainbow-mode nil t) (rainbow-mode 1))
 ;; End:
 ;;; schwilk-theme.el ends here
-

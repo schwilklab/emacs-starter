@@ -11,9 +11,9 @@
 ;;        - ~/.emacs.d/lisp/efunc.el  -   custom functions
 ;;        - ~/.emacs.d/lisp/mode.el   -   modes supported
 ;;        - ~/.emacs./lisp/ekeys.el   -   key bindings
-;;        - ~/.emacs.d/lisp/theme.el  -   modeline and color theme
+;;        - ~/.emacs.d/lisp/theme.el  -   color theme
 ;;
-;; And color themese are in ~/.emacs.d/themes
+;; And color theme is in ~/.emacs.d/themes
 ;;;;---------------------------------------------------------------------------
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -59,6 +59,7 @@
         org-plus-contrib
         ox-pandoc
         pandoc-mode
+        smart-mode-line ; for a simpler mode line theme
         unicode-fonts
         ))
 
@@ -84,19 +85,33 @@
 (show-paren-mode 1)                        ; Turn on parentheses matching
 (setq zmacs-regions t)
 (setq-default indent-tabs-mode nil)        ; uses spaces rather than tabs
-(setq default-tab-width 4);
-(setq delete-key-deletes-forward t)
-(setq mouse-yank-at-point t)
-(line-number-mode t)
-(column-number-mode t)
+(column-number-mode t)                     ; show column number in modeline
 (setq-default fill-column 79)
 (defalias 'yes-or-no-p 'y-or-n-p)     ;; y or n is enough
 
 ;; Search and autocompletion
-(setq ido-mode 1) ;; Use IDO with flx-ido for both buffer and file completion
-(setq ido-default-file-method 'selected-window)
-(setq ido-default-buffer-method 'selected-window)
-(setq ido-everywhere t)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; Search and autocompletion
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; Ivy and counsel
+;;(require ivy)
+(ivy-mode)
+(setq ivy-use-virtual-buffers t
+	  ivy-count-format "%d/%d ")
+
+(with-eval-after-load 'ivy
+  (push (cons #'swiper (cdr (assq t ivy-re-builders-alist)))
+        ivy-re-builders-alist)
+  (push (cons t #'ivy--regex-fuzzy) ivy-re-builders-alist))
+
+;; Or: ido-mode
+;; (setq ido-mode 1) ;; Use IDO with flx-ido for both buffer and file completion
+;; (setq ido-default-file-method 'selected-window)
+;; (setq ido-default-buffer-method 'selected-window)
+;; (setq ido-everywhere t)
+
 
 ;; Windows-style cut-copy-paste
 (cua-mode t)
@@ -143,15 +158,13 @@ minibuffer), then split the current window horizontally."
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; backup and autosave options
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(setq backup-directory-alist `(("." . ,(expand-file-name
-                                    (concat emacs-root "backups"))))
-      auto-save-file-name-transforms
-         `((".*" ,(expand-file-name (concat emacs-root "autosaves"))))
+(setq backup-by-copying t) ; seems to be current default anyway
+(setq backup-directory-alist `(("." . ,(concat emacs-root "backups")))
       delete-old-versions t
       kept-new-versions 6
       kept-old-versions 2
-)
+      )
+
 ;; create the autosave dir if necessary, since emacs won't.
 (make-directory (concat emacs-root "autosaves") t)
 
@@ -172,3 +185,4 @@ minibuffer), then split the current window horizontally."
 
 ;; Add final message so using C-h l I can see if .emacs failed
 (message ".emacs loaded successfully!.")
+
